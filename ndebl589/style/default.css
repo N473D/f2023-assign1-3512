@@ -1,0 +1,41 @@
+body, header, footer, div, section {
+    background-color: #666666;
+}
+p, h1, h2, h3, h4, h5, h6 {
+    color: lightblue;
+}
+.gallery {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    width: inherit;
+    height: inherit;
+}
+
+.cell , .cell div{
+    display: flexbox;
+    background-color: #404040;
+    margin: 10px;
+    width: inherit;
+    height: inherit;
+}
+
+.listings {
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr 1fr 1fr 1fr;
+    width: fill;
+    height: fill;
+}
+
+.listings > * {
+    display: flexbox;
+}
+
+.listings > div:nth-child(12n+1),
+.listings > div:nth-child(12n+2),
+.listings > div:nth-child(12n+3),
+.listings > div:nth-child(12n+4),
+.listings > div:nth-child(12n+5),
+.listings > div:nth-child(12n+6) {
+    background-color: blue;
+}
