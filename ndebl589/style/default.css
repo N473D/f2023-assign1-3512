@@ -6,8 +6,7 @@ p, h1, h2, h3, h4, h5, h6 {
 }
 .gallery {
     display: grid;
-    grid-template-columns: 1fr 9fr;
-    grid-template-rows: repeat(9, 1fr);
+    grid-template-columns: 1fr 1fr;
     width: inherit;
     height: inherit;
 }
@@ -22,20 +21,117 @@ p, h1, h2, h3, h4, h5, h6 {
 
 .listings {
     display: grid;
-    grid-template-columns: 2fr 2fr 1fr 1fr 1fr 1fr;
-    width: fill;
-    height: fill;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    width: auto;
+    height: auto;
+    border: #404040;
 }
 
 .listings > * {
     display: flexbox;
 }
 
-.listings > div:nth-child(12n+1),
-.listings > div:nth-child(12n+2),
-.listings > div:nth-child(12n+3),
-.listings > div:nth-child(12n+4),
-.listings > div:nth-child(12n+5),
-.listings > div:nth-child(12n+6) {
-    background-color: blue;
+.listings > div:nth-child(14n+1),
+.listings > div:nth-child(14n+2),
+.listings > div:nth-child(14n+3),
+.listings > div:nth-child(14n+4),
+.listings > div:nth-child(14n+5),
+.listings > div:nth-child(14n+6),
+.listings > div:nth-child(14n+7) {
+    background-color: #404040;
+}
+
+a{
+text-decoration: none;
+}
+
+nav > *{
+    display: inline-block;
+    padding: 10px;
+}
+
+header > *{
+    display: inline-block;
+    padding: 10px;
+}
+
+.favorite {
+    font-size: xx-large;
+    color: crimson;
+}
+
+a {
+    color: lightblue;
+}
+
+:visited {
+    color: purple;
+}
+
+a:hover {
+    color: darkblue;
+}
+
+div:has(> .linkIcon) {
+    padding: 10px;
+}
+
+.not {
+    color: lightblue;
+}
+
+.not:hover {
+    color: crimson;
+}
+
+.info {
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr 3fr 1fr;
+}
+
+.info > div > * {
+padding: 10px;
+margin: 10px;
+margin-top: 0px;
+margin-bottom: 0px;
+}
+
+.info > div {
+    background-color: #404040;
+}
+
+.info > div:nth-child(2n+1){
+    grid-column: 2;
+}
+.info > div:nth-child(2n){
+    grid-column: 4;
+}
+
+fieldset > * {
+    margin: 5px;
+    padding: 10px;
+    background-color: #404040;
+    color: lightblue;
+}
+input, option, select {
+    background-color: lightblue;
+    color: #666666;
+}
+
+footer {
+    display: flexbox;
+    flex-direction: column;
+    background-color: #404040;
+}
+
+html {
+    background-color: #404040;
+}
+
+body > p, body > h1, body > a {
+    padding: 30px;
+}
+
+body > section {
+    padding: 30px;
 }

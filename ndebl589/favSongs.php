@@ -13,16 +13,12 @@ $conn = DatabaseHelper::createConnection(
 );
 // $_SESSION["favorites"] = [];
 if (isset($_GET["song_id"])) {
+    if (!isset($_SESSION["favorites"])) {
+        $_SESSION["favorites"] = [];
+    }
     if (!in_array($_GET["song_id"], $_SESSION["favorites"])) {
-        if (!isset($_SESSION["favorites"])) {
-            $_SESSION["favorites"] = [];
-        }
         $favorites = $_SESSION["favorites"];
         $favorites[] = $_GET["song_id"];
-        $_SESSION["favorites"] = $favorites;
-    } else {
-        $favorites = $_SESSION["favorites"];
-        unset($favorites[array_search($_GET["song_id"], $favorites["favorites"])]);
         $_SESSION["favorites"] = $favorites;
     }
     header("Location: favSongs.php");
@@ -42,6 +38,10 @@ if (isset($_GET["song_id_rm"])) {
     }
     header("Location: favSongs.php");
 }
+
+if (isset($_GET['all'])){
+    unset($_SESSION["favorites"]);
+}
 $builder = new PageBuilder($conn);
 ?>
 <!DOCTYPE html>
@@ -60,6 +60,8 @@ $builder = new PageBuilder($conn);
 <?php $builder->generateHeader(3); ?>
 
 <body>
+    <h1> Favorites </h1>
+    <a href='?all=true'> Remove all </a>
     <section class='listings'>
         <div>
             <h3>Title</h3>
@@ -74,6 +76,9 @@ $builder = new PageBuilder($conn);
             <h3>Genre</h3>
         </div>
         <div>
+            <h3>Popularity</h3>
+        </div>
+        <div>
             <h3>Liked</h3>
         </div>
         <div>
@@ -86,8 +91,6 @@ $builder = new PageBuilder($conn);
         ?>
     </section>
 </body>
-<footer>
-    <?php $builder->generateFooter(); ?>
-</footer>
+<?php $builder->generateFooter(); ?>
 
 </html>

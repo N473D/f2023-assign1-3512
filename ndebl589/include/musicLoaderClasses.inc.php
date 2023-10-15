@@ -60,43 +60,37 @@ class PageBuilder
     public function __construct($connection)
     {
         $this->pdo = $connection;
+        // $this->gallery[0] = array(
+        //     'title' => 'Musicool Introduction',
+        //     'priority' => '0',
+        //     'link' => null,
+        //     'query' => '',
+        //     'text' => '<p>
+        //                    A music browsing site developed as an assignment for COMP 3512. Full development of this site was done
+        //                    by Nathan DeBliek, original github <a href="">N473D</a>.
+        //                </p>'
+        // );
         $this->gallery[0] = array(
-            'title' => 'Musicool Introduction',
-            'priority' => '0',
-            'link' => null,
-            'query' => '',
-            'text' => '<p>
-                           A music browsing site developed as an assignment for COMP 3512. Full development of this site was done
-                           by Nathan DeBliek, original github <a href="">N473D</a>.
-                       </p>'
-        );
-        $this->gallery[1] = array(
             'title' => 'Top Genres',
             'priority' => '1',
             'link' => null,
-            'query' => 'SELECT genres.genre_name, count(songs.genre_id) as number_of_songs
-                FROM songs
-                OUTER JOIN genres ON songs.genre_id = genres.genre_id
-                GROUP BY songs.genre_id
-                ORDER BY count(songs.genre_id) DESC '
+            'query' => 'GROUP BY songs.genre_id
+                        ORDER BY count(songs.genre_id) DESC LIMIT 10'
         );
-        $this->gallery[2] = array(
+        $this->gallery[1] = array(
             'title' => 'Top Artist',
             'priority' => '1',
             'link' => null,
-            'query' => 'SELECT artists.artist_name, count(songs.artist_id)  as number_of_songs
-                FROM songs
-                OUTER JOIN artists ON songs.artist_id = artists.artist_id
-                GROUP BY songs.artist_id
-                ORDER BY count(songs.artist_id) DESC '
+            'query' => 'GROUP BY songs.artist_id
+                        ORDER BY count(songs.artist_id) DESC  LIMIT 10'
         );
-        $this->gallery[3] = array(
+        $this->gallery[2] = array(
             'title' => 'Wanna be hits',
             'priority' => '1',
             'link' => 'songSearchResults.php',
             'query' => 'ORDER BY popularity DESC '
         );
-        $this->gallery[4] = array(
+        $this->gallery[3] = array(
             'title' => 'One-hit Wonders',
             'priority' => '1',
             'link' => 'songSearchResults.php',
@@ -104,7 +98,7 @@ class PageBuilder
                         HAVING count(songs.artist_id) = 1
                         ORDER BY popularity DESC '
         );
-        $this->gallery[5] = array(
+        $this->gallery[4] = array(
             'title' => 'Acoustic Harmony',
             'priority' => '1',
             'link' => 'songSearchResults.php',
@@ -112,21 +106,21 @@ class PageBuilder
                         GROUP BY songs.artist_id
                         ORDER BY duration DESC '
         );
-        $this->gallery[6] = array(
+        $this->gallery[5] = array(
             'title' => 'Join the Club',
             'priority' => '1',
             'link' => 'songSearchResults.php',
             'query' => 'WHERE danceability >= 80
                         ORDER BY (danceability*1.6+energy*1.4) DESC '
         );
-        $this->gallery[7] = array(
+        $this->gallery[6] = array(
             'title' => 'Running Away',
             'priority' => '1',
             'link' => 'songSearchResults.php',
             'query' => 'WHERE bpm >= 120 AND bpm <= 125
                         ORDER BY (energy*1.3+valence*1.6) DESC '
         );
-        $this->gallery[8] = array(
+        $this->gallery[7] = array(
             'title' => 'Study Hacks',
             'priority' => '1',
             'link' => 'songSearchResults.php',
@@ -146,10 +140,19 @@ class PageBuilder
             }
         }
         foreach ($this->gallery as $featured) {
-            echo "<a href='?id=" . array_search($featured, $this->gallery) . "' class='cell col_Tab'>";
+            echo "<div class='cell col_Tab'><a href='?id=" . array_search($featured, $this->gallery) . "' >";
             echo "<div>";
             echo "<h2>" . $featured['title'] . "</h2>";
-            echo "</div></a>";
+            if(array_search($featured, $this->gallery) == 0) {
+                echo "<div class='alter'>";
+                $this->generateGenreList($this->gallery[0]['query']);
+                echo "</div>";
+            } else if(array_search($featured, $this->gallery) == 1) {
+                echo "<div class='alter'>";
+                $this->generateArtistList($this->gallery[1]['query']);
+                echo "</div>";
+            }
+            echo "</div></a></div>";
         }
     }
 
@@ -157,28 +160,33 @@ class PageBuilder
     {
         ?>
         <header>
+            <h1>
+                COMP 3512 Assign 1 (Musicool)
+            </h1>
             <nav>
                 <?php
                 if ($current != 0) {
-                    echo "<a href='home.php'>Home</a> <br/>";
+                    echo "<h3><a href='home.php'>Home</a></h3>";
                 }
                 if ($current != 1) {
-                    echo "<a href='favSongs.php'>Favorites</a> <br/>";
+                    echo "<h3><a href='favSongs.php'>Favorites</a></h3>";
                 }
                 if ($current != 2) {
-                    echo "<a href='songSearch.php'>Search</a> <br/>";
+                    echo "<h3><a href='songSearch.php'>Search</a></h3>";
+                }
+                if ($current != 3) {
+                    echo "<h3><a href='aboutUs.php'>About Us</a></h3>";
                 }
                 ?>
             </nav>
-            <h1>
-                Musicool
-            </h1>
         </header>
         <?php
     }
     public function generateFooter()
     {
-
+        echo "<footer><p>
+                COMP 3512 <br/> Nathan DeBliek &copy; <br/> <a href='https://github.com/N473D/f2023-assign1-3512'>Github</a>
+                </p></footer>";
     }
 
     public function getAll($query)
@@ -189,27 +197,26 @@ class PageBuilder
         return $statement->fetchAll();
     }
 
-    public function getArtist()
+    public function getArtist($query)
     {
+        // echo "<script>console.log('check point 1' );</script>";
         $sql = "SELECT artists.artist_name, artists.artist_id, count(songs.artist_id)  as number_of_songs
-                FROM songs
-                OUTER JOIN artists ON songs.artist_id = artists.artist_id
-                GROUP BY songs.artist_id
-                ORDER BY count(songs.artist_id) DESC LIMIT 10;";
+                FROM artists
+                LEFT OUTER JOIN songs ON songs.artist_id = artists.artist_id " . $query;
         $statement =
             DatabaseHelper::runQuery($this->pdo, $sql, null);
+        // echo "<script>console.log('check point 1' );</script>";
         return $statement->fetchAll();
     }
 
-    public function getGenre()
+    public function getGenre($query)
     {
         $sql = "SELECT genres.genre_name, genres.genre_id, count(songs.genre_id) as number_of_songs
-                FROM songs
-                OUTER JOIN genres ON songs.genre_id = genres.genre_id
-                GROUP BY songs.genre_id
-                ORDER BY count(songs.genre_id) DESC LIMIT 10;";
+                FROM genres
+                LEFT OUTER JOIN songs ON songs.genre_id = genres.genre_id " . $query;
         $statement =
             DatabaseHelper::runQuery($this->pdo, $sql, null);
+        // echo "<script>console.log('check point 1' );</script>";
         return $statement->fetchAll();
     }
 
@@ -222,42 +229,37 @@ class PageBuilder
                 $namef = substr($namef, 0, 23) . "&hellip;";
             }
             echo "<div><a href='song.php?song_id=" . $song['song_id'] . "'><h4>" . $namef . "</h4></a></div>";
-            echo "<div><a href=''><h4>" . $song['artist_name'] . "</h4></a></div>";
-            echo "<div><a href=''><h4>" . $song['year'] . "</h4></a></div>";
-            echo "<div><a href=''><h4>" . $song['genre_name'] . "</h4></a></div>";
-            echo "<div><a href='favSongs.php?song_id=" . $song['song_id'] . "'>like</a></div>";
-            echo "<div><a href='song.php?song_id=" . $song['song_id'] . "'>link</a></div>";
+            echo "<div><a href='songSearchResults.php?title=&artist=" . $song['artist_id'] . "'><h4>" . $song['artist_name'] . "</h4></a></div>";
+            echo "<div><a href='songSearchResults.php?title=&year=" . $song['year'] . "'><h4>" . $song['year'] . "</h4></a></div>";
+            echo "<div><a href='songSearchResults.php?title=&genre=" . $song['genre_id'] . "'><h4>" . $song['genre_name'] . "</h4></a></div>";
+            echo "<div><h4>" . $song['popularity'] . "</h4></div>";
+            echo "<div><a href='favSongs.php?song_id=" . $song['song_id'] . "' class='favorite not'> &#9825; </a></div>";
+            echo "<div><a href='song.php?song_id=" . $song['song_id'] . "' class='linkIcon'> View More</a></div>";
         }
+        unset($_SESSION['featured']);
     }
 
-    public function generateArtistList()
+    public function generateArtistList($query)
     {
-        $artists = $this->getArtist();
+        $artists = $this->getArtist($query);
         foreach ($artists as $artist) {
             $namef = $artist['artist_name'];
             if (strlen($namef) > 25) {
                 $namef = substr($namef, 0, 23) . "&hellip;";
             }
-            echo "<div><a href=''><h4>" . $namef . "</h4></a></div>";
-            $namef = $artist['genre_name'];
-            if (strlen($namef) > 25) {
-                $namef = substr($namef, 0, 23) . "&hellip;";
-            }
-            echo "<div><a href=''><h4>" . $namef . "</h4></a></div>";
-            echo "<div><a href=''><h4>" . $artist['number_of_songs'] . "</h4></a></div>";
+            echo "<div><a href=''><h4>" . $namef . " - " . $artist['number_of_songs'] . " Songs</h4></div>";
         }
     }
 
-    public function generateGenreList()
+    public function generateGenreList($query)
     {
-        $genres = $this->getGenre();
+        $genres = $this->getGenre($query);
         foreach ($genres as $genre) {
             $namef = $genre['genre_name'];
             if (strlen($namef) > 25) {
                 $namef = substr($namef, 0, 23) . "&hellip;";
             }
-            echo "<div><a href=''><h4>" . $namef . "</h4></a></div>";
-            echo "<div><a href=''><h4>" . $genre['number_of_songs'] . "</h4></a></div>";
+            echo "<div><a href=''><h4>" . $namef . " - " . $genre['number_of_songs'] . " Songs</h4></a></div>";
         }
     }
 
@@ -270,12 +272,13 @@ class PageBuilder
             if (strlen($namef) > 25) {
                 $namef = substr($namef, 0, 23) . "&hellip;";
             }
-            echo "<div><a href=''><h4>" . $namef . "</h4></a></div>";
-            echo "<div><a href=''><h4>" . $song['artist_name'] . "</h4></a></div>";
-            echo "<div><a href=''><h4>" . $song['year'] . "</h4></a></div>";
-            echo "<div><a href=''><h4>" . $song['genre_name'] . "</h4></a></div>";
-            echo "<div><a href='favSongs.php?song_id_rm=" . $song['song_id'] . "'>like</a></div>";
-            echo "<div><a href='song.php?song_id=" . $song['song_id'] . "'>link</a></div>";
+            echo "<div><a href='song.php?song_id=" . $song['song_id'] . "'><h4>" . $namef . "</h4></a></div>";
+            echo "<div><a href='songSearchResults.php?title=&artist=" . $song['artist_id'] . "'><h4>" . $song['artist_name'] . "</h4></a></div>";
+            echo "<div><a href='songSearchResults.php?title=&year=" . $song['year'] . "'><h4>" . $song['year'] . "</h4></a></div>";
+            echo "<div><a href='songSearchResults.php?title=&genre=" . $song['genre_id'] . "'><h4>" . $song['genre_name'] . "</h4></a></div>";
+            echo "<div><h4>" . $song['popularity'] . "</h4></div>";
+            echo "<div><a href='favSongs.php?song_id_rm=" . $song['song_id'] . "' class='favorite'> &#9825; </a></div>";
+            echo "<div><a href='song.php?song_id=" . $song['song_id'] . "'class='linkIcon'>View More</a></div>";
         }
     }
 }

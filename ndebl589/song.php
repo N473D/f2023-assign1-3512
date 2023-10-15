@@ -28,29 +28,29 @@ if (isset($_GET['song_id'])) {
 </head>
 <?php $builder->generateHeader(4); ?>
 <body>
-    <?php
+    <div class='info'>
+        <?php
         if (isset($song['title'])) {
-            echo "<h1>" . $song['title'] . "</h1>";
-            echo "<h2>" . $song['artist_name'] . "</h2>";
-            echo "<h3>" . $song['year'] . "</h3>";
-            echo "<h3>" . $song['genre_name'] . "</h3>";
-            echo "<h4>" . $song['popularity'] . "% Rating</h4>";
-            echo "<p>" . floor(($song['duration'] / 60) % 60) . ":" . ($song['duration'] % 60) . "</p>";
-            echo "<p>" . $song['bpm'] . " BPM</p>";
-            echo "<p>" . $song['energy'] . "% Energy</p>";
-            echo "<p>" . $song['danceability'] . "% Danceability</p>";
-            echo "<p>" . $song['loudness'] . " dB</p>";
-            echo "<p>" . $song['liveness'] . " % Liveness</p>";
-            echo "<p>" . $song['valence'] . "% Positive Vibs</p>";
-            echo "<p>" . $song['acousticness'] . "% Acousticness </p>";
-            echo "<p>" . $song['speechiness'] . "% Wordiness</p>";
+            echo "<div><h1>" . $song['title'] . "</h1></div>";
+            echo "<div><p>" . $song['loudness'] . " dB</p></div>";
+            echo "<div><h2>" . $song['artist_name'] . "</h2></div>";
+            echo "<div><p>" . $song['energy'] . "% Energy</p></div>";
+            echo "<div><h3>" . $song['popularity'] . "% Rating</h3></div>";
+            echo "<div><p>" . $song['danceability'] . "% Danceability</p></div>";
+            echo "<div><h4>" . $song['year'] . "</h4></div>";
+            echo "<div><p>" . $song['liveness'] . " % Liveness</p></div>";
+            echo "<div><h4>" . $song['genre_name'] . "</h4></div>";
+            echo "<div><p>" . $song['valence'] . "% Positive Vibs</p></div>";
+            echo "<div><p>" . floor(($song['duration'] / 60) % 60) . ":" . ($song['duration'] % 60) . "</p></div>";
+            echo "<div><p>" . $song['acousticness'] . "% Acousticness </p></div>";
+            echo "<div><p>" . $song['bpm'] . " BPM</p></div>";
+            echo "<div><p>" . $song['speechiness'] . "% Wordiness</p></div>";
         } else {
             echo "<h1> NO SONG SELECTED </h1>";
         }
-    ?>
+        ?>
+    </div>
 </body>
-<footer>
-    <?php $builder->generateFooter(); ?>
-</footer>
+<?php $builder->generateFooter(); ?>
 
 </html>
