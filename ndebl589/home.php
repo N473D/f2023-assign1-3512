@@ -27,11 +27,6 @@ $builder = new PageBuilder($conn);
 <?php $builder->generateHeader(0); ?>
 <body>
     <section>
-        <h1>Musicool Home</h1>
-        <p>
-            A music browsing site developed as an assignment for COMP 3512. Full development of this site was done
-            by Nathan DeBliek, original github <a href="">N473D</a>.
-        </p>
     </section>
     <section class="gallery">
         <?php $builder->generateFeaturedList(); ?>

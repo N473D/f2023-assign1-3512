@@ -61,6 +61,16 @@ class PageBuilder
     {
         $this->pdo = $connection;
         $this->gallery[0] = array(
+            'title' => 'Musicool Introduction',
+            'priority' => '0',
+            'link' => null,
+            'query' => '',
+            'text' => '<p>
+                           A music browsing site developed as an assignment for COMP 3512. Full development of this site was done
+                           by Nathan DeBliek, original github <a href="">N473D</a>.
+                       </p>'
+        );
+        $this->gallery[1] = array(
             'title' => 'Top Genres',
             'priority' => '1',
             'link' => null,
@@ -70,7 +80,7 @@ class PageBuilder
                 GROUP BY songs.genre_id
                 ORDER BY count(songs.genre_id) DESC '
         );
-        $this->gallery[1] = array(
+        $this->gallery[2] = array(
             'title' => 'Top Artist',
             'priority' => '1',
             'link' => null,
@@ -80,13 +90,13 @@ class PageBuilder
                 GROUP BY songs.artist_id
                 ORDER BY count(songs.artist_id) DESC '
         );
-        $this->gallery[2] = array(
+        $this->gallery[3] = array(
             'title' => 'Wanna be hits',
             'priority' => '1',
             'link' => 'songSearchResults.php',
             'query' => 'ORDER BY popularity DESC '
         );
-        $this->gallery[3] = array(
+        $this->gallery[4] = array(
             'title' => 'One-hit Wonders',
             'priority' => '1',
             'link' => 'songSearchResults.php',
@@ -94,7 +104,7 @@ class PageBuilder
                         HAVING count(songs.artist_id) = 1
                         ORDER BY popularity DESC '
         );
-        $this->gallery[4] = array(
+        $this->gallery[5] = array(
             'title' => 'Acoustic Harmony',
             'priority' => '1',
             'link' => 'songSearchResults.php',
@@ -102,21 +112,21 @@ class PageBuilder
                         GROUP BY songs.artist_id
                         ORDER BY duration DESC '
         );
-        $this->gallery[5] = array(
+        $this->gallery[6] = array(
             'title' => 'Join the Club',
             'priority' => '1',
             'link' => 'songSearchResults.php',
             'query' => 'WHERE danceability >= 80
                         ORDER BY (danceability*1.6+energy*1.4) DESC '
         );
-        $this->gallery[6] = array(
+        $this->gallery[7] = array(
             'title' => 'Running Away',
             'priority' => '1',
             'link' => 'songSearchResults.php',
             'query' => 'WHERE bpm >= 120 AND bpm <= 125
                         ORDER BY (energy*1.3+valence*1.6) DESC '
         );
-        $this->gallery[7] = array(
+        $this->gallery[8] = array(
             'title' => 'Study Hacks',
             'priority' => '1',
             'link' => 'songSearchResults.php',
@@ -136,7 +146,7 @@ class PageBuilder
             }
         }
         foreach ($this->gallery as $featured) {
-            echo "<a href='?id=" . array_search($featured, $this->gallery) . "' class='cell priotiry_" . $featured['priority'] . "'>";
+            echo "<a href='?id=" . array_search($featured, $this->gallery) . "' class='cell col_Tab'>";
             echo "<div>";
             echo "<h2>" . $featured['title'] . "</h2>";
             echo "</div></a>";
@@ -179,6 +189,30 @@ class PageBuilder
         return $statement->fetchAll();
     }
 
+    public function getArtist()
+    {
+        $sql = "SELECT artists.artist_name, artists.artist_id, count(songs.artist_id)  as number_of_songs
+                FROM songs
+                OUTER JOIN artists ON songs.artist_id = artists.artist_id
+                GROUP BY songs.artist_id
+                ORDER BY count(songs.artist_id) DESC LIMIT 10;";
+        $statement =
+            DatabaseHelper::runQuery($this->pdo, $sql, null);
+        return $statement->fetchAll();
+    }
+
+    public function getGenre()
+    {
+        $sql = "SELECT genres.genre_name, genres.genre_id, count(songs.genre_id) as number_of_songs
+                FROM songs
+                OUTER JOIN genres ON songs.genre_id = genres.genre_id
+                GROUP BY songs.genre_id
+                ORDER BY count(songs.genre_id) DESC LIMIT 10;";
+        $statement =
+            DatabaseHelper::runQuery($this->pdo, $sql, null);
+        return $statement->fetchAll();
+    }
+
     public function generateSongList($query)
     {
         $songs = $this->getAll($query);
@@ -187,14 +221,46 @@ class PageBuilder
             if (strlen($namef) > 25) {
                 $namef = substr($namef, 0, 23) . "&hellip;";
             }
-            echo "<div><a href=''><h4>" . $namef . "</h4></a></div>";
+            echo "<div><a href='song.php?song_id=" . $song['song_id'] . "'><h4>" . $namef . "</h4></a></div>";
             echo "<div><a href=''><h4>" . $song['artist_name'] . "</h4></a></div>";
             echo "<div><a href=''><h4>" . $song['year'] . "</h4></a></div>";
             echo "<div><a href=''><h4>" . $song['genre_name'] . "</h4></a></div>";
             echo "<div><a href='favSongs.php?song_id=" . $song['song_id'] . "'>like</a></div>";
-            echo "<div><a href=''>link</a></div>";
+            echo "<div><a href='song.php?song_id=" . $song['song_id'] . "'>link</a></div>";
         }
     }
+
+    public function generateArtistList()
+    {
+        $artists = $this->getArtist();
+        foreach ($artists as $artist) {
+            $namef = $artist['artist_name'];
+            if (strlen($namef) > 25) {
+                $namef = substr($namef, 0, 23) . "&hellip;";
+            }
+            echo "<div><a href=''><h4>" . $namef . "</h4></a></div>";
+            $namef = $artist['genre_name'];
+            if (strlen($namef) > 25) {
+                $namef = substr($namef, 0, 23) . "&hellip;";
+            }
+            echo "<div><a href=''><h4>" . $namef . "</h4></a></div>";
+            echo "<div><a href=''><h4>" . $artist['number_of_songs'] . "</h4></a></div>";
+        }
+    }
+
+    public function generateGenreList()
+    {
+        $genres = $this->getGenre();
+        foreach ($genres as $genre) {
+            $namef = $genre['genre_name'];
+            if (strlen($namef) > 25) {
+                $namef = substr($namef, 0, 23) . "&hellip;";
+            }
+            echo "<div><a href=''><h4>" . $namef . "</h4></a></div>";
+            echo "<div><a href=''><h4>" . $genre['number_of_songs'] . "</h4></a></div>";
+        }
+    }
+
     public function generateFavsList($favorites)
     {
         $query = "WHERE song_id IN (" . implode(", ", $favorites) . " )";
@@ -209,7 +275,7 @@ class PageBuilder
             echo "<div><a href=''><h4>" . $song['year'] . "</h4></a></div>";
             echo "<div><a href=''><h4>" . $song['genre_name'] . "</h4></a></div>";
             echo "<div><a href='favSongs.php?song_id_rm=" . $song['song_id'] . "'>like</a></div>";
-            echo "<div><a href=''>link</a></div>";
+            echo "<div><a href='song.php?song_id=" . $song['song_id'] . "'>link</a></div>";
         }
     }
 }

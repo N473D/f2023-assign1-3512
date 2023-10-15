@@ -40,7 +40,7 @@ if (isset($_GET["song_id_rm"])) {
             $_SESSION["favorites"] = $favorites;
         }
     }
-    // header("Location: favSongs.php");
+    header("Location: favSongs.php");
 }
 $builder = new PageBuilder($conn);
 ?>

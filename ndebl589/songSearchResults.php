@@ -27,6 +27,11 @@ $builder = new PageBuilder($conn);
 </head>
 <?php $builder->generateHeader(3); ?>
 <body>
+    <?php
+    if (isset($_SESSION["featured"])) {
+    } else if (isset($_SESSION["search"])) {
+    }
+    ?>
     <section class='listings'>
         <div>
             <h3>Title</h3>
@@ -49,7 +54,7 @@ $builder = new PageBuilder($conn);
         <?php
     if (isset($_SESSION["featured"])) {
         $builder->generateSongList($_SESSION["featured"]["query"] . " LIMIT 10");
-    } else if (isset($_SESSION["featured"])) {
+    } else if (isset($_SESSION["search"])) {
         $builder->generateSongList($_SESSION["query"] . ";");
     } else {
         $builder->generateSongList("");
